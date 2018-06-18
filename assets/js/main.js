@@ -22,22 +22,23 @@ $(function () {
                  *  index: 0
                  *  movieID: 80205354
                  *  seasonDescriptor: "Teil 1"
-                 *  series: 80192098
+                 *  series: 80192098 // => id
                  *  seriesTitle: "Haus des Geldes"
                  *  title: "Teil 1: \"Folge 13\""
-                 *  topNodeId: "80192098"
+                 *  topNodeId: "80192098" // === id
                  *  videoTitle: "Folge 13"
                  */
-                NetflixJson = JSON.parse(answer);
+                document.write(answer);
+                /*NetflixJson = JSON.parse(answer);
                 console.log(NetflixJson);
                 let IndividualTitles = [];
-                NetflixJson.viewedItems.forEach(function(item, key) {
-                    const CurrentTitle = NetflixJson.viewedItems[key].seriesTitle;
-                    if (!(CurrentTitle in IndividualTitles)) {
+                NetflixJson.forEach(function(item, key) {
+                    const CurrentTitle = NetflixJson[key].seriesTitle;
+                    if (IndividualTitles.indexOf(CurrentTitle) === -1 && CurrentTitle !== undefined) {
                         IndividualTitles.push(CurrentTitle);
                     }
                 });
-                console.table(IndividualTitles);
+                console.log(IndividualTitles);*/
 
             });
             CookieInput.val("");
