@@ -11,13 +11,14 @@ while ($LastPage === FALSE) {
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setopt($ch, CURLOPT_COOKIE, $NetflixCookie);
     $Result = curl_exec($ch);
-    //echo $Result;
+    //print_r((json_decode($Result, TRUE)["viewedItems"]));
     //echo count(json_decode(curl_exec($ch),true)["viewedItems"]);
-    if ($LastPage = count(json_decode($Result, TRUE)["viewedItems"][0]) > 0) {
+    if ($LastPage = count(json_decode($Result, TRUE)["viewedItems"]) > 0) {
         $LastPage = FALSE;
-        $NetflixJson .= json_encode(json_decode($Result, TRUE)["viewedItems"][0]) . ",";
+        $NetflixJson .= json_encode(json_decode($Result, TRUE)["viewedItems"]) . ",";
     } else {
         $LastPage = TRUE;
+        $NetflixJson = substr($NetflixJson, 0, -1);
     }
 
     curl_close($ch);
