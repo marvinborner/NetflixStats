@@ -106,10 +106,15 @@ function AnalyzeData(JsonResponse) {
     console.table(AverageWatchTimeOccurrence);
     console.table(SortedTitleOccurrenceCounter);
 
-    RenderData(AverageWatchTimeOccurrence, SortedTitleOccurrenceCounter);
+    RenderDayTimeChart(AverageWatchTimeOccurrence);
+    RenderMostWatchedChart(SortedTitleOccurrenceCounter);
 }
 
-function RenderData(AverageWatchTimeOccurrenceArray, TitleOccurrenceCounterObject) {
+function RenderDayTimeChart(AverageWatchTimeOccurrenceArray) {
+    var randomColorGenerator = function () {
+        return '#' + (Math.random().toString(16) + '0000000').slice(2, 8);
+    };
+
     // Render day time chart
     const WatchTimeChartElement = document.getElementById("WatchTimeChart").getContext("2d");
     const WatchTimeChart = new Chart(WatchTimeChartElement, {
@@ -118,7 +123,6 @@ function RenderData(AverageWatchTimeOccurrenceArray, TitleOccurrenceCounterObjec
             labels: ["12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm"],
             datasets: [{
                 label: "Watches at daytime",
-                backgroundColor: "rgb(255, 99, 132)",
                 borderColor: "rgb(255, 99, 132)",
                 cubicInterpolationMode: "monotone",
                 pointRadius: 0,
@@ -126,17 +130,59 @@ function RenderData(AverageWatchTimeOccurrenceArray, TitleOccurrenceCounterObjec
                 data: AverageWatchTimeOccurrenceArray
             }]
         },
-        options: {}
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        display: false
+                    },
+                    gridLines: {
+                        zeroLineColor: 'transparent',
+                        zeroLineWidth: 2,
+                        drawTicks: false,
+                        drawBorder: false,
+                        color: 'transparent'
+                    }
+                }],
+                xAxes: [{
+                    gridLines: {
+                        zeroLineColor: 'rgba(255, 255, 255, 0.25)',
+                        display: true,
+                        drawBorder: false,
+                        color: 'rgba(255, 255, 255, 0.25)'
+                    }
+                }]
+            },
+            tension: 1
+        }
     });
+}
 
+function RenderMostWatchedChart(TitleOccurrenceCounterObject) {
     // Render and calculate most watched chart
+
+    const GenerateRandomColorArray = function () {
+        let RandomColorArray = [];
+        const Generate = function () {
+            var letters = '0123456789ABCDEF'.split('');
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        };
+        for (var key in TitleOccurrenceCounterObject) {
+            RandomColorArray.push(Generate());
+        }
+        return RandomColorArray;
+    };
+
     const MostWatchedChartElement = document.getElementById("MostWatchedChart").getContext("2d");
     var MostWatchedChartData = {
         labels: [],
         datasets: [{
             label: "Most watched",
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "rgba(75,192,192,1)",
+            backgroundColor: GenerateRandomColorArray(),
             data: []
         }]
     };
@@ -145,22 +191,23 @@ function RenderData(AverageWatchTimeOccurrenceArray, TitleOccurrenceCounterObjec
             var data = chart.config.data;
             for (var key in TitleOccurrenceCounterObject) {
                 if (TitleOccurrenceCounterObject.hasOwnProperty(key)) {
-                    data.labels.push(key);
-                    data.datasets[0].data.push(TitleOccurrenceCounterObject[key]);
+                    if (TitleOccurrenceCounterObject[key] > 2) {
+                        data.labels.push(key);
+                        data.datasets[0].data.push(TitleOccurrenceCounterObject[key]);
+                    }
                 }
             }
         }
     });
     var MostWatchedChart = new Chart(MostWatchedChartElement, {
-        type: 'bar',
+        type: 'doughnut',
         data: MostWatchedChartData,
         options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
+            animation: {
+                animateScale: true
+            },
+            legend: {
+                display: false
             }
         }
     });
@@ -171,7 +218,7 @@ function sortObject(list) {
     for (var key in list) {
         sortable.push([key, list[key]]);
     }
-    sortable.sort(function(a, b) {
+    sortable.sort(function (a, b) {
         return (a[1] < b[1] ? -1 : (a[1] > b[1] ? 1 : 0));
     });
     var orderedList = {};
@@ -179,4 +226,4 @@ function sortObject(list) {
         orderedList[sortable[i][0]] = sortable[i][1];
     }
     return orderedList;
-  }
+}
