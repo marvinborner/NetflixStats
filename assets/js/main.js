@@ -79,10 +79,12 @@ function AnalyzeData(JsonResponse) {
     const TotalSeriesWatched = IndividualSeries.length;
 
     // Calculate watch time occurrence (average times in which the user watches sth.)
-    let AverageWatchTimeOccurrence = {};
-    for (let i = 0; i < AverageWatchTimes.length; i++) {
-        const Time = AverageWatchTimes[i];
-        AverageWatchTimeOccurrence[Time] = AverageWatchTimeOccurrence[Time] ? AverageWatchTimeOccurrence[Time] + 1 : 1;
+    let AverageWatchTimeOccurrence = [];
+    const OccurrenceCounter = new Map([...new Set(AverageWatchTimes)].map(
+        x => [x, AverageWatchTimes.filter(y => y === x).length]
+    ));
+    for (let i = 0; i < 24; i++) {
+        AverageWatchTimeOccurrence.push(OccurrenceCounter.get(i));
     }
 
     console.table(IndividualSeries);
@@ -93,17 +95,17 @@ function AnalyzeData(JsonResponse) {
     RenderData(AverageWatchTimeOccurrence);
 }
 
-function RenderData(AverageWatchTimeOccurrenceObject) {
+function RenderData(AverageWatchTimeOccurrenceArray) {
     const WatchTimeChartElement = document.getElementById("WatchTimeChart").getContext("2d");
     const WatchTimeChart = new Chart(WatchTimeChartElement, {
         type: 'line',
         data: {
             labels: ["12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm"],
             datasets: [{
-                label: "Average daytime",
+                label: "Average watches at daytime",
                 backgroundColor: 'rgb(255, 99, 132)',
                 borderColor: 'rgb(255, 99, 132)',
-                data: AverageWatchTimeOccurrenceObject,
+                data: AverageWatchTimeOccurrenceArray
             }]
         },
 
