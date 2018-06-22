@@ -1,4 +1,10 @@
 <?php
+/**
+ * Serverside Script of the Netflix Stats Generator to get the personal Netflix JSON
+ * @author Marvin Borner
+ * @copyright Marvin Borner 2018
+ */
+
 $NetflixCookie = $_POST["Cookie"];
 
 $LastPage = FALSE;

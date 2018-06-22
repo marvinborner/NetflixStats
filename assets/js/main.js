@@ -1,3 +1,9 @@
+/**
+ * Clientside Script of the Netflix Stats Generator
+ * @author Marvin Borner
+ * @copyright Marvin Borner 2018
+ */
+
 const CookieInput = $(".CookieInput");
 let NetflixJson;
 
@@ -126,7 +132,7 @@ function RenderDayTimeChart(AverageWatchTimeOccurrenceArray) {
                 borderColor: "rgb(255, 99, 132)",
                 cubicInterpolationMode: "monotone",
                 pointRadius: 0,
-                pointHitRadius: 10,
+                pointHitRadius: 15,
                 data: AverageWatchTimeOccurrenceArray
             }]
         },

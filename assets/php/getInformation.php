@@ -1,4 +1,10 @@
 <?php
+/**
+ * Serverside Script of the Netflix Stats Generator to get information of a movie/series
+ * @author Marvin Borner
+ * @copyright Marvin Borner 2018
+ */
+
 $RequestedTitle = $_GET["Title"];
 
 $ApiKey = file_get_contents("../../../../ApiKeys/ThemoviedbApiKey.txt");
