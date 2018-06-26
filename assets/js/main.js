@@ -4,26 +4,41 @@
  * @copyright Marvin Borner 2018
  */
 
-$(function() {
+$(function () {
+  const DebuggingMode = true;
   const CookieInput = $(".CookieInput");
   let NetflixJson;
 
-  CookieInput.keyup(function(e) {
-    if (e.keyCode === 13) {
-      $.ajax({
-        url: "assets/php/getNetflixJson.php",
-        data: {
-          Cookie: CookieInput.val()
-        },
-        type: "POST"
-      }).done(function(response) {
-        CookieInput.val("");
-        CookieInput.hide();
-        $(".Main").fadeIn();
-        AnalyzeData(response);
-      });
-    }
-  });
+  if (!DebuggingMode) {
+    CookieInput.keyup(function (e) {
+      if (e.keyCode === 13) {
+        $.ajax({
+          url: "assets/php/getNetflixJson.php",
+          data: {
+            Cookie: CookieInput.val()
+          },
+          type: "POST"
+        }).done(function (response) {
+          CookieInput.val("");
+          CookieInput.hide();
+          $(".Main").fadeIn();
+          AnalyzeData(response);
+        });
+      }
+    });
+  } else {
+    CookieInput.hide();
+    $.ajax({
+      url: "assets/js/ExampleData.js",
+      data: {
+        Cookie: CookieInput.val()
+      },
+      type: "POST"
+    }).done(function (response) {
+      $(".Main").fadeIn();
+      AnalyzeData(response);
+    });
+  }
 
   /**
    * Analyzes the Netflix data JSON response
@@ -71,8 +86,8 @@ $(function() {
     let IndividualMovies = [];
     let AverageWatchTimes = [];
 
-    NetflixJson.forEach(function(item, pageKey) {
-      item.forEach(function(eachItem, ItemNumber) {
+    NetflixJson.forEach(function (item, pageKey) {
+      item.forEach(function (eachItem, ItemNumber) {
         if ("seriesTitle" in eachItem) {
           // is series
           const CurrentTitle = NetflixJson[pageKey][ItemNumber].seriesTitle;
@@ -125,8 +140,7 @@ $(function() {
     // Calculate the most watched series/movies
     let TitleCount = [];
     const UnsortedTitleOccurrenceCounter = EveryWatched.reduce(
-      (prev, curr) => ((prev[curr] = ++prev[curr] || 1), prev),
-      {}
+      (prev, curr) => ((prev[curr] = ++prev[curr] || 1), prev), {}
     );
     const SortedTitleOccurrenceCounter = sortObject(
       UnsortedTitleOccurrenceCounter
@@ -143,8 +157,18 @@ $(function() {
     console.table(AverageWatchTimeOccurrence);
     console.table(SortedTitleOccurrenceCounter);
 
+    // render
     RenderDayTimeChart(AverageWatchTimeOccurrence);
     RenderMostWatchedChart(SortedTitleOccurrenceCounter);
+
+    // create scroll events
+    new Waypoint({
+      element: $('canvas#MostWatchedChart'),
+      handler: (direction) => {
+          $('canvas#MostWatchedChart').fadeTo(1000, (direction === "down" ? 1 : 0))
+      },
+      offset: $('canvas#MostWatchedChart').height()
+    });
   }
 
   /**
@@ -152,7 +176,7 @@ $(function() {
    * @param {Array} AverageWatchTimeOccurrenceArray
    */
   function RenderDayTimeChart(AverageWatchTimeOccurrenceArray) {
-    var randomColorGenerator = function() {
+    var randomColorGenerator = () => {
       return "#" + (Math.random().toString(16) + "0000000").slice(2, 8);
     };
 
@@ -189,43 +213,37 @@ $(function() {
           "10pm",
           "11pm"
         ],
-        datasets: [
-          {
-            label: "Watches at daytime",
-            borderColor: "rgb(255, 99, 132)",
-            cubicInterpolationMode: "monotone",
-            pointRadius: 0,
-            pointHitRadius: 15,
-            data: AverageWatchTimeOccurrenceArray
-          }
-        ]
+        datasets: [{
+          label: "Watches at daytime",
+          borderColor: "rgb(255, 99, 132)",
+          cubicInterpolationMode: "monotone",
+          pointRadius: 0,
+          pointHitRadius: 15,
+          data: AverageWatchTimeOccurrenceArray
+        }]
       },
       options: {
         scales: {
-          yAxes: [
-            {
-              ticks: {
-                display: false
-              },
-              gridLines: {
-                zeroLineColor: "transparent",
-                zeroLineWidth: 2,
-                drawTicks: false,
-                drawBorder: false,
-                color: "transparent"
-              }
+          yAxes: [{
+            ticks: {
+              display: false
+            },
+            gridLines: {
+              zeroLineColor: "transparent",
+              zeroLineWidth: 2,
+              drawTicks: false,
+              drawBorder: false,
+              color: "transparent"
             }
-          ],
-          xAxes: [
-            {
-              gridLines: {
-                zeroLineColor: "rgba(255, 255, 255, 0.25)",
-                display: true,
-                drawBorder: false,
-                color: "rgba(255, 255, 255, 0.25)"
-              }
+          }],
+          xAxes: [{
+            gridLines: {
+              zeroLineColor: "rgba(255, 255, 255, 0.25)",
+              display: true,
+              drawBorder: false,
+              color: "rgba(255, 255, 255, 0.25)"
             }
-          ]
+          }]
         },
         tension: 1
       }
@@ -239,9 +257,9 @@ $(function() {
   function RenderMostWatchedChart(TitleOccurrenceCounterObject) {
     // Render and calculate most watched chart
 
-    const GenerateRandomColorArray = function() {
+    const GenerateRandomColorArray = () => {
       let RandomColorArray = [];
-      const Generate = function() {
+      const Generate = () => {
         var letters = "0123456789ABCDEF".split("");
         var color = "#";
         for (var i = 0; i < 6; i++) {
@@ -260,16 +278,14 @@ $(function() {
       .getContext("2d");
     var MostWatchedChartData = {
       labels: [],
-      datasets: [
-        {
-          label: "Most watched",
-          backgroundColor: GenerateRandomColorArray(),
-          data: []
-        }
-      ]
+      datasets: [{
+        label: "Most watched",
+        backgroundColor: GenerateRandomColorArray(),
+        data: []
+      }]
     };
     Chart.pluginService.register({
-      beforeInit: function(chart) {
+      beforeInit: (chart) => {
         var data = chart.config.data;
         for (var key in TitleOccurrenceCounterObject) {
           if (TitleOccurrenceCounterObject.hasOwnProperty(key)) {
@@ -286,7 +302,8 @@ $(function() {
       data: MostWatchedChartData,
       options: {
         animation: {
-          animateScale: true
+          animateScale: true,
+          animateRotate: true
         },
         legend: {
           display: false
@@ -318,7 +335,7 @@ $(function() {
         Title: Title
       },
       type: "POST"
-    }).done(function(response) {
+    }).done((response) => {
       handleFunction(JSON.parse(response));
     });
   }
@@ -332,7 +349,7 @@ $(function() {
     for (var key in list) {
       sortable.push([key, list[key]]);
     }
-    sortable.sort(function(a, b) {
+    sortable.sort((a, b) => {
       return a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0;
     });
     var orderedList = {};
