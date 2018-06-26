@@ -4,13 +4,13 @@
  * @copyright Marvin Borner 2018
  */
 
-$(function () {
+$(() => {
   const DebuggingMode = true;
   const CookieInput = $(".CookieInput");
   let NetflixJson;
 
   if (!DebuggingMode) {
-    CookieInput.keyup(function (e) {
+    CookieInput.keyup((e) => {
       if (e.keyCode === 13) {
         $.ajax({
           url: "assets/php/getNetflixJson.php",
@@ -18,7 +18,7 @@ $(function () {
             Cookie: CookieInput.val()
           },
           type: "POST"
-        }).done(function (response) {
+        }).done((response) => {
           CookieInput.val("");
           CookieInput.hide();
           $(".Main").fadeIn();
@@ -34,7 +34,7 @@ $(function () {
         Cookie: CookieInput.val()
       },
       type: "POST"
-    }).done(function (response) {
+    }).done((response) => {
       $(".Main").fadeIn();
       AnalyzeData(response);
     });
@@ -86,12 +86,12 @@ $(function () {
     let IndividualMovies = [];
     let AverageWatchTimes = [];
 
-    NetflixJson.forEach(function (item, pageKey) {
-      item.forEach(function (eachItem, ItemNumber) {
+    NetflixJson.forEach((item, pageKey) => {
+      item.forEach((eachItem, ItemNumber) => {
         if ("seriesTitle" in eachItem) {
           // is series
           const CurrentTitle = NetflixJson[pageKey][ItemNumber].seriesTitle;
-          EveryWatched.push(CurrentTitle);
+          EveryWatched.push(`${CurrentTitle}`);
           if (
             IndividualSeries.indexOf(CurrentTitle) === -1 &&
             CurrentTitle !== undefined
@@ -103,7 +103,7 @@ $(function () {
         } else {
           // is movie
           const CurrentTitle = NetflixJson[pageKey][ItemNumber].videoTitle;
-          EveryWatched.push(CurrentTitle);
+          EveryWatched.push(`${CurrentTitle}`);
           if (
             IndividualMovies.indexOf(CurrentTitle) === -1 &&
             CurrentTitle !== undefined
@@ -138,7 +138,6 @@ $(function () {
     }
 
     // Calculate the most watched series/movies
-    let TitleCount = [];
     const UnsortedTitleOccurrenceCounter = EveryWatched.reduce(
       (prev, curr) => ((prev[curr] = ++prev[curr] || 1), prev), {}
     );
@@ -165,7 +164,7 @@ $(function () {
     new Waypoint({
       element: $('canvas#MostWatchedChart'),
       handler: (direction) => {
-          $('canvas#MostWatchedChart').fadeTo(1000, (direction === "down" ? 1 : 0))
+        $('canvas#MostWatchedChart').fadeTo(1000, (direction === "down" ? 1 : 0))
       },
       offset: $('canvas#MostWatchedChart').height()
     });
@@ -289,7 +288,7 @@ $(function () {
         var data = chart.config.data;
         for (var key in TitleOccurrenceCounterObject) {
           if (TitleOccurrenceCounterObject.hasOwnProperty(key)) {
-            if (TitleOccurrenceCounterObject[key] > 2) {
+            if (TitleOccurrenceCounterObject[key] > 1) {
               data.labels.push(key);
               data.datasets[0].data.push(TitleOccurrenceCounterObject[key]);
             }
@@ -317,18 +316,6 @@ $(function () {
    * @param {String} Title
    */
   function RenderTopSeries(Title) {
-    const InformationJSON = getTitleInformation(Title, output => {
-      return output;
-    });
-    console.table(InformationJSON);
-    // TODO: Write to site/DOM + logging output
-  }
-
-  /**
-   * Gets an JSON information object of the requested series/movie
-   * @param {String} Title
-   */
-  function getTitleInformation(Title, handleFunction) {
     $.ajax({
       url: "assets/php/getInformation.php",
       data: {
@@ -336,8 +323,9 @@ $(function () {
       },
       type: "POST"
     }).done((response) => {
-      handleFunction(JSON.parse(response));
+      console.log(JSON.parse(response));
     });
+    // TODO: Write to site/DOM
   }
 
   /**
