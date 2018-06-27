@@ -26,10 +26,6 @@ body
 .SectionHeader h1
     text-transform: capitalize
 
-// Charts
-canvas#MostWatchedChart
-    opacity: 0 
-
 // Gradients
 .GradientBackground
     %Gradient
@@ -60,6 +56,25 @@ canvas#MostWatchedChart
         @extend %Gradient
 
 // Favorites
-.FavoritesSection .SectionHeader
-    height: 40vh
-    color: $BlueColor
+.FavoritesSection
+    .SectionHeader
+        height: 40vh
+        color: $BlueColor
+
+    .MostWatchedOverview
+        padding: 30px
+
+        .OverviewText
+            position: relative
+            float: left
+            max-width: 50%
+
+        .MostWatchedPoster
+            position: relative
+            float: right
+            max-width: 50%
+            margin-bottom: 20px
+
+// Charts
+canvas#MostWatchedChart
+    opacity: 0

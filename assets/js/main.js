@@ -10,7 +10,7 @@ $(() => {
   let NetflixJson;
 
   if (!DebuggingMode) {
-    CookieInput.keyup((e) => {
+    CookieInput.keyup(e => {
       if (e.keyCode === 13) {
         $.ajax({
           url: "assets/php/getNetflixJson.php",
@@ -18,7 +18,7 @@ $(() => {
             Cookie: CookieInput.val()
           },
           type: "POST"
-        }).done((response) => {
+        }).done(response => {
           CookieInput.val("");
           CookieInput.hide();
           $(".Main").fadeIn();
@@ -34,7 +34,7 @@ $(() => {
         Cookie: CookieInput.val()
       },
       type: "POST"
-    }).done((response) => {
+    }).done(response => {
       $(".Main").fadeIn();
       AnalyzeData(response);
     });
@@ -139,7 +139,8 @@ $(() => {
 
     // Calculate the most watched series/movies
     const UnsortedTitleOccurrenceCounter = EveryWatched.reduce(
-      (prev, curr) => ((prev[curr] = ++prev[curr] || 1), prev), {}
+      (prev, curr) => ((prev[curr] = ++prev[curr] || 1), prev),
+      {}
     );
     const SortedTitleOccurrenceCounter = sortObject(
       UnsortedTitleOccurrenceCounter
@@ -162,11 +163,11 @@ $(() => {
 
     // create scroll events
     new Waypoint({
-      element: $('canvas#MostWatchedChart'),
-      handler: (direction) => {
-        $('canvas#MostWatchedChart').fadeTo(1000, (direction === "down" ? 1 : 0))
+      element: $("canvas#MostWatchedChart"),
+      handler: direction => {
+        $("canvas#MostWatchedChart").fadeTo(1000, direction === "down" ? 1 : 0);
       },
-      offset: $('canvas#MostWatchedChart').height()
+      offset: $("canvas#MostWatchedChart").height()
     });
   }
 
@@ -183,7 +184,7 @@ $(() => {
     const WatchTimeChartElement = document
       .getElementById("WatchTimeChart")
       .getContext("2d");
-    const WatchTimeChart = new Chart(WatchTimeChartElement, {
+    new Chart(WatchTimeChartElement, {
       type: "line",
       data: {
         labels: [
@@ -212,37 +213,43 @@ $(() => {
           "10pm",
           "11pm"
         ],
-        datasets: [{
-          label: "Watches at daytime",
-          borderColor: "rgb(255, 99, 132)",
-          cubicInterpolationMode: "monotone",
-          pointRadius: 0,
-          pointHitRadius: 15,
-          data: AverageWatchTimeOccurrenceArray
-        }]
+        datasets: [
+          {
+            label: "Watches at daytime",
+            borderColor: "rgb(255, 99, 132)",
+            cubicInterpolationMode: "monotone",
+            pointRadius: 0,
+            pointHitRadius: 15,
+            data: AverageWatchTimeOccurrenceArray
+          }
+        ]
       },
       options: {
         scales: {
-          yAxes: [{
-            ticks: {
-              display: false
-            },
-            gridLines: {
-              zeroLineColor: "transparent",
-              zeroLineWidth: 2,
-              drawTicks: false,
-              drawBorder: false,
-              color: "transparent"
+          yAxes: [
+            {
+              ticks: {
+                display: false
+              },
+              gridLines: {
+                zeroLineColor: "transparent",
+                zeroLineWidth: 2,
+                drawTicks: false,
+                drawBorder: false,
+                color: "transparent"
+              }
             }
-          }],
-          xAxes: [{
-            gridLines: {
-              zeroLineColor: "rgba(255, 255, 255, 0.25)",
-              display: true,
-              drawBorder: false,
-              color: "rgba(255, 255, 255, 0.25)"
+          ],
+          xAxes: [
+            {
+              gridLines: {
+                zeroLineColor: "rgba(255, 255, 255, 0.25)",
+                display: true,
+                drawBorder: false,
+                color: "rgba(255, 255, 255, 0.25)"
+              }
             }
-          }]
+          ]
         },
         tension: 1
       }
@@ -277,14 +284,16 @@ $(() => {
       .getContext("2d");
     var MostWatchedChartData = {
       labels: [],
-      datasets: [{
-        label: "Most watched",
-        backgroundColor: GenerateRandomColorArray(),
-        data: []
-      }]
+      datasets: [
+        {
+          label: "Most watched",
+          backgroundColor: GenerateRandomColorArray(),
+          data: []
+        }
+      ]
     };
     Chart.pluginService.register({
-      beforeInit: (chart) => {
+      beforeInit: chart => {
         var data = chart.config.data;
         for (var key in TitleOccurrenceCounterObject) {
           if (TitleOccurrenceCounterObject.hasOwnProperty(key)) {
@@ -296,7 +305,7 @@ $(() => {
         }
       }
     });
-    var MostWatchedChart = new Chart(MostWatchedChartElement, {
+    new Chart(MostWatchedChartElement, {
       type: "doughnut",
       data: MostWatchedChartData,
       options: {
@@ -322,10 +331,17 @@ $(() => {
         Title: Title
       },
       type: "POST"
-    }).done((response) => {
-      console.log(JSON.parse(response));
+    }).done(result => {
+      const TopInformation = JSON.parse(result);
+      $(".MostWatchedOverview .MostWatchedPoster").attr(
+        "src",
+        `https://image.tmdb.org/t/p/w300${TopInformation.poster_path}`
+      );
+      $(".MostWatchedOverview .OverviewText .Description").text(
+        TopInformation.overview
+      );
+      console.log(TopInformation);
     });
-    // TODO: Write to site/DOM
   }
 
   /**
