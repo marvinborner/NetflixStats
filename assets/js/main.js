@@ -81,42 +81,64 @@ $(() => {
     NetflixJson = JSON.parse(JsonResponse);
     console.log(NetflixJson);
     let EveryWatched = [];
+    let TitleWatchTime = {}; //how long you watched a series/movies
     let IndividualTitles = [];
     let IndividualSeries = [];
     let IndividualMovies = [];
-    let AverageWatchTimes = [];
+    let AverageWatchTimes = []; // when you watched a series/movie
 
     NetflixJson.forEach((item, pageKey) => {
       item.forEach((eachItem, ItemNumber) => {
+        const currentObject = NetflixJson[pageKey][ItemNumber];
+        let currentTitle; // will be overriden by 'if series'
+
         if ("seriesTitle" in eachItem) {
           // is series
-          const CurrentTitle = NetflixJson[pageKey][ItemNumber].seriesTitle;
-          EveryWatched.push(`${CurrentTitle}`);
+          currentTitle = currentObject.seriesTitle;
+          EveryWatched.push(currentTitle);
           if (
-            IndividualSeries.indexOf(CurrentTitle) === -1 &&
-            CurrentTitle !== undefined
+            IndividualSeries.indexOf(currentTitle) === -1 &&
+            currentTitle !== undefined
           ) {
             // only if not already crawled -> individualism
-            IndividualSeries.push(CurrentTitle);
-            IndividualTitles.push(CurrentTitle);
+            IndividualSeries.push(currentTitle);
           }
         } else {
           // is movie
-          const CurrentTitle = NetflixJson[pageKey][ItemNumber].videoTitle;
-          EveryWatched.push(`${CurrentTitle}`);
+          currentTitle = currentObject.videoTitle;
+          EveryWatched.push(currentTitle);
           if (
-            IndividualMovies.indexOf(CurrentTitle) === -1 &&
-            CurrentTitle !== undefined
+            IndividualMovies.indexOf(currentTitle) === -1 &&
+            currentTitle !== undefined
           ) {
             // only if not already crawled -> individualism
-            IndividualMovies.push(CurrentTitle);
-            IndividualTitles.push(CurrentTitle);
+            IndividualMovies.push(currentTitle);
           }
         }
 
-        // get watch time
+        // individualism check for every title
+        if (
+          IndividualMovies.indexOf(currentTitle) === -1 &&
+          currentTitle !== undefined
+        ) {
+          if (!(currentTitle.includes(IndividualTitles))) IndividualTitles.push(currentTitle);
+
+          // get watch-time in hours (how long you watched a series/movies)
+          const watchTimeInHours = currentObject.duration / 60 / 60;
+          let watchTime;
+          if (currentTitle in TitleWatchTime) {
+            // already in object -> add to previous
+            const previousTitleWatchTime = TitleWatchTime[currentTitle];
+            watchTime = watchTimeInHours + previousTitleWatchTime;
+          } else {
+            watchTime = watchTimeInHours;
+          }
+          TitleWatchTime[currentTitle] = watchTime;
+        }
+
+        // get watch time as date (when you watched a series/movie)
         const DayTimeInSeconds = new Date(
-          NetflixJson[pageKey][ItemNumber].date * 1000
+          currentObject.date * 1000
         );
         const DayTimeInHours = DayTimeInSeconds.getHours();
         AverageWatchTimes.push(DayTimeInHours);
@@ -139,8 +161,7 @@ $(() => {
 
     // Calculate the most watched series/movies
     const UnsortedTitleOccurrenceCounter = EveryWatched.reduce(
-      (prev, curr) => ((prev[curr] = ++prev[curr] || 1), prev),
-      {}
+      (prev, curr) => ((prev[curr] = ++prev[curr] || 1), prev), {}
     );
     const SortedTitleOccurrenceCounter = sortObject(
       UnsortedTitleOccurrenceCounter
@@ -156,10 +177,11 @@ $(() => {
     console.table(IndividualMovies);
     console.table(AverageWatchTimeOccurrence);
     console.table(SortedTitleOccurrenceCounter);
+    console.table(TitleWatchTime);
 
     // render
     RenderDayTimeChart(AverageWatchTimeOccurrence);
-    RenderMostWatchedChart(SortedTitleOccurrenceCounter);
+    RenderMostWatchedChart(SortedTitleOccurrenceCounter, TitleWatchTime);
 
     // create scroll events
     new Waypoint({
@@ -213,43 +235,37 @@ $(() => {
           "10pm",
           "11pm"
         ],
-        datasets: [
-          {
-            label: "Watches at daytime",
-            borderColor: "rgb(255, 99, 132)",
-            cubicInterpolationMode: "monotone",
-            pointRadius: 0,
-            pointHitRadius: 15,
-            data: AverageWatchTimeOccurrenceArray
-          }
-        ]
+        datasets: [{
+          label: "Watches at daytime",
+          borderColor: "rgb(255, 99, 132)",
+          cubicInterpolationMode: "monotone",
+          pointRadius: 0,
+          pointHitRadius: 15,
+          data: AverageWatchTimeOccurrenceArray
+        }]
       },
       options: {
         scales: {
-          yAxes: [
-            {
-              ticks: {
-                display: false
-              },
-              gridLines: {
-                zeroLineColor: "transparent",
-                zeroLineWidth: 2,
-                drawTicks: false,
-                drawBorder: false,
-                color: "transparent"
-              }
+          yAxes: [{
+            ticks: {
+              display: false
+            },
+            gridLines: {
+              zeroLineColor: "transparent",
+              zeroLineWidth: 2,
+              drawTicks: false,
+              drawBorder: false,
+              color: "transparent"
             }
-          ],
-          xAxes: [
-            {
-              gridLines: {
-                zeroLineColor: "rgba(255, 255, 255, 0.25)",
-                display: true,
-                drawBorder: false,
-                color: "rgba(255, 255, 255, 0.25)"
-              }
+          }],
+          xAxes: [{
+            gridLines: {
+              zeroLineColor: "rgba(255, 255, 255, 0.25)",
+              display: true,
+              drawBorder: false,
+              color: "rgba(255, 255, 255, 0.25)"
             }
-          ]
+          }]
         },
         tension: 1
       }
@@ -259,10 +275,10 @@ $(() => {
   /**
    * Renders the "most watched series" doughnut chart
    * @param {Object} TitleOccurrenceCounterObject
+   * @param {Object} TitleWatchTimeObject
    */
-  function RenderMostWatchedChart(TitleOccurrenceCounterObject) {
+  function RenderMostWatchedChart(TitleOccurrenceCounterObject, TitleWatchTimeObject) {
     // Render and calculate most watched chart
-
     const GenerateRandomColorArray = () => {
       let RandomColorArray = [];
       const Generate = () => {
@@ -284,13 +300,11 @@ $(() => {
       .getContext("2d");
     var MostWatchedChartData = {
       labels: [],
-      datasets: [
-        {
-          label: "Most watched",
-          backgroundColor: GenerateRandomColorArray(),
-          data: []
-        }
-      ]
+      datasets: [{
+        label: "Most watched",
+        backgroundColor: GenerateRandomColorArray(),
+        data: []
+      }]
     };
     Chart.pluginService.register({
       beforeInit: chart => {
@@ -298,7 +312,7 @@ $(() => {
         for (var key in TitleOccurrenceCounterObject) {
           if (TitleOccurrenceCounterObject.hasOwnProperty(key)) {
             if (TitleOccurrenceCounterObject[key] > 1) {
-              data.labels.push(key);
+              data.labels.push(`${key} (Time: ${Math.round(TitleWatchTimeObject[key] * 100) / 100} hours)`); // add label with rounded watch time
               data.datasets[0].data.push(TitleOccurrenceCounterObject[key]);
             }
           }
