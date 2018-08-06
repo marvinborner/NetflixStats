@@ -9,6 +9,9 @@ $(() => {
   const CookieInput = $(".CookieInput");
   let NetflixJson;
 
+  moment.locale("de");
+  moment().utcOffset(0); // offset for unix timestamp
+
   if (!DebuggingMode) {
     CookieInput.keyup(e => {
       if (e.keyCode === 13) {
@@ -30,9 +33,6 @@ $(() => {
     CookieInput.hide();
     $.ajax({
       url: "assets/js/ExampleData.js",
-      data: {
-        Cookie: CookieInput.val()
-      },
       type: "POST"
     }).done(response => {
       $(".Main").fadeIn();
@@ -82,6 +82,8 @@ $(() => {
     console.log(NetflixJson);
     let EveryWatched = [];
     let TitleWatchTime = {}; //how long you watched a series/movies
+    let HeatmapDatesAll = [];
+    let HeatmapDates = [];
     let IndividualTitles = [];
     let IndividualSeries = [];
     let IndividualMovies = [];
@@ -121,7 +123,7 @@ $(() => {
           IndividualMovies.indexOf(currentTitle) === -1 &&
           currentTitle !== undefined
         ) {
-          if (!(currentTitle.includes(IndividualTitles))) IndividualTitles.push(currentTitle);
+          if (!(IndividualTitles.includes(currentTitle))) IndividualTitles.push(currentTitle);
 
           // get watch-time in hours (how long you watched a series/movies)
           const watchTimeInHours = currentObject.duration / 60 / 60;
@@ -137,22 +139,46 @@ $(() => {
         }
 
         // get watch time as date (when you watched a series/movie)
-        const DayTimeInSeconds = new Date(
-          currentObject.date * 1000
-        );
-        const DayTimeInHours = DayTimeInSeconds.getHours();
+        const DayTimeInHours = Number(moment.unix(currentObject.date).format('HH'));
         AverageWatchTimes.push(DayTimeInHours);
+
+        // get dates and push to heatmap date array for later duplicate deletion
+        HeatmapDatesAll.push(currentObject.dateStr);
+        // HeatmapDates.push({
+        //   date: moment(currentObject.dateStr, 'DD.MM.YY').toDate(),
+        //   count: 1
+        // });
       });
     });
 
+    // calculate count of dates for heatmap chart
+    const HeatmapDatesOccurrenceCounter = new Map(
+      [...new Set(HeatmapDatesAll)].map(x => [
+        x,
+        HeatmapDatesAll.filter(y => y === x).length // get length (=> occurrence) of filtered array
+      ])
+    );
+
+    uniqueHeatmapDates = HeatmapDatesAll.filter(function (item, pos) {
+      return HeatmapDatesAll.indexOf(item) == pos;
+    });
+
+    uniqueHeatmapDates.forEach((index, val) => {
+      HeatmapDates.push({
+        date: moment(uniqueHeatmapDates[val], 'DD.MM.YY').toDate(),
+        count: HeatmapDatesOccurrenceCounter.get(uniqueHeatmapDates[val])
+      });
+    });
+
+
     const TotalSeriesWatched = IndividualSeries.length;
 
-    // Calculate watch time occurrence (average times in which the user watches sth.)
+    // Calculate watch time occurrence (times in which the user watched sth.)
     let AverageWatchTimeOccurrence = [];
     const WatchTimeOccurrenceCounter = new Map(
       [...new Set(AverageWatchTimes)].map(x => [
         x,
-        AverageWatchTimes.filter(y => y === x).length
+        AverageWatchTimes.filter(y => y === x).length // get length (=> occurrence) of filtered array
       ])
     );
     for (let i = 0; i < 24; i++) {
@@ -169,7 +195,6 @@ $(() => {
     const TopSeries = Object.keys(SortedTitleOccurrenceCounter)[
       Object.keys(SortedTitleOccurrenceCounter).length - 1
     ];
-    RenderTopSeries(TopSeries);
 
     // log
     console.table(IndividualTitles);
@@ -180,8 +205,10 @@ $(() => {
     console.table(TitleWatchTime);
 
     // render
+    RenderTopSeries(TopSeries);
     RenderDayTimeChart(AverageWatchTimeOccurrence);
     RenderMostWatchedChart(SortedTitleOccurrenceCounter, TitleWatchTime);
+    RenderHeatmap(HeatmapDates);
 
     // create scroll events
     new Waypoint({
@@ -356,6 +383,23 @@ $(() => {
       );
       console.log(TopInformation);
     });
+  }
+
+  /**
+   * Renders a heatmap of all watched days
+   * @param {Array} chartData
+   */
+  function RenderHeatmap(chartData) {
+    const Heatmap = calendarHeatmap()
+      .data(chartData)
+      .selector('#Heatmap')
+      .colorRange(['#ffd3d3', '#fc1111'])
+      .tooltipEnabled(true)
+      .onClick(function (data) {
+        console.log('onClick callback. Data:', data);
+      });
+
+    Heatmap();
   }
 
   /**
