@@ -1,10 +1,10 @@
 function calendarHeatmap() {
     // defaults
-    var width = 750;
-    var height = 110;
-    var legendWidth = 150;
+    var width = Number($(document).width()) - 72;
+    var height = 7.5 * (Number($(document).width()) / 70 + 2);
+    var legendWidth = 0;
     var selector = 'body';
-    var SQUARE_LENGTH = 11;
+    var SQUARE_LENGTH = Number($(document).width()) / 70;
     var SQUARE_PADDING = 2;
     var MONTH_LABEL_PADDING = 6;
     var now = moment().endOf('day').toDate();
@@ -152,7 +152,8 @@ function calendarHeatmap() {
                 .attr('width', width)
                 .attr('class', 'calendar-heatmap')
                 .attr('height', height)
-                .style('padding', '36px');
+                .style('padding', '36px')
+                .style('text-align', 'center');
 
             dayRects = svg.selectAll('.day-cell')
                 .data(dateRange); //  array of days for the last yr

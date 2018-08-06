@@ -209,15 +209,6 @@ $(() => {
     RenderDayTimeChart(AverageWatchTimeOccurrence);
     RenderMostWatchedChart(SortedTitleOccurrenceCounter, TitleWatchTime);
     RenderHeatmap(HeatmapDates);
-
-    // create scroll events
-    new Waypoint({
-      element: $("canvas#MostWatchedChart"),
-      handler: direction => {
-        $("canvas#MostWatchedChart").fadeTo(1000, direction === "down" ? 1 : 0);
-      },
-      offset: $("canvas#MostWatchedChart").height()
-    });
   }
 
   /**
@@ -374,11 +365,11 @@ $(() => {
       type: "POST"
     }).done(result => {
       const TopInformation = JSON.parse(result);
-      $(".MostWatchedOverview .MostWatchedPoster").attr(
+      $(".MostWatchedOverview > .MostWatchedPoster").attr(
         "src",
         `https://image.tmdb.org/t/p/w300${TopInformation.poster_path}`
       );
-      $(".MostWatchedOverview .OverviewText .Description").text(
+      $(".MostWatchedOverview > .Description").text(
         TopInformation.overview
       );
       console.log(TopInformation);

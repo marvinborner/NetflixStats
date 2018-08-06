@@ -12,6 +12,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela+Round">
     <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/grid.css">
     <link rel="stylesheet" href="assets/css/main.css">
     <title>Netflix Personal Stats Generator</title>
 </head>
@@ -21,28 +22,26 @@
     <input class="CookieInput" type="text" placeholder="Type your cookie...">
 
     <div class="Main">
-        <div class="GradientBackground">
-            <div class="Color GreenBlue Active"></div>
-            <div class="Color OrangePink"></div>
-            <div class="Color GreenBlue"></div>
+        <div class="row around-xs middle-xs MostWatchedOverview">
+            <div class="col-xs Description"></div>
+            <img class="col-xs-4 MostWatchedPoster" src="" alt="">
         </div>
 
-        <div class="FavoritesSection">
-            <div class="SectionHeader">
-                <h1>Let's check out your most watched series</h1>
+        <div class="row">
+            <div class="col-xs">
+                <canvas id="WatchTimeChart"></canvas>
             </div>
-            <div class="MostWatchedOverview">
-                <div class="OverviewText">
-                    <div class="Description">
-
-                    </div>
+            <div class="col-xs">
+                <canvas class="MostWatchedChart" id="MostWatchedChart"></canvas>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs">
+                <div class="HeatmapWrap">
+                    <div class="Heatmap" id="Heatmap"></div>
                 </div>
-                <img class="MostWatchedPoster" src="" alt="">
             </div>
         </div>
-        <canvas id="WatchTimeChart"></canvas>
-        <div id="Heatmap"></div>
-        <canvas id="MostWatchedChart"></canvas>
     </div>
 
     <script src="assets/js/jQuery.js"></script>
