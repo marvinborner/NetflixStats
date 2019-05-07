@@ -1,0 +1,35 @@
+/**
+ * Stylesheet of the Netflix Stats Generator
+ * @author Marvin Borner
+ * @copyright Marvin Borner 2019
+ */
+
+html, body {
+    padding: 8px;
+    font-family: "Varela Round", sans-serif !important;
+    text-rendering: optimizeLegibility !important;
+}
+
+.loading, .stats {
+    display: none;
+}
+
+.stats {
+    text-align: center;
+}
+
+.stats > div {
+    padding: 8px;
+    margin-top: 8px;
+    border: 1px solid black;
+}
+
+.heatMap {
+    border-collapse: collapse;
+}
+
+.heatMap td {
+    width: 2vw;
+    height: 2vw;
+    border: 1px solid black;
+}

@@ -8,43 +8,42 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela+Round">
-    <link rel="stylesheet" href="assets/css/normalize.css">
-    <link rel="stylesheet" href="assets/css/grid.css">
-    <link rel="stylesheet" href="assets/css/main.css">
-    <title>Netflix Personal Stats Generator</title>
+    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+          name="viewport">
+    <meta content="ie=edge" http-equiv="X-UA-Compatible">
+    <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+    <link href="assets/css/normalize.css" rel="stylesheet">
+    <link href="assets/css/main.css" rel="stylesheet">
+    <title>Netflix Statistics</title>
 </head>
 
 <body>
+<div id="cookie_wrap">
+    <label for="cookie">Enter your cookie:</label>
+    <input class="cookie" id="cookie" placeholder="memclid=***; ..." type="text">
+</div>
 
-    <input class="CookieInput" type="text" placeholder="Type your cookie...">
+<div class="loading" id="loading">Loading...</div>
 
-    <div class="Main">
-        <div class="row around-xs middle-xs MostWatchedOverview">
-            <div class="col-xs-8 Description"></div>
-            <img class="col-xs-3 MostWatchedPoster" src="" alt="">
-        </div>
-
-        <div class="row">
-            <div class="col-xs">
-                <canvas id="WatchTimeChart"></canvas>
-            </div>
-            <div class="col-xs">
-                <canvas class="MostWatchedChart" id="MostWatchedChart"></canvas>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs">
-                <div class="HeatmapWrap">
-                    <div class="Heatmap" id="Heatmap"></div>
-                </div>
-            </div>
-        </div>
+<div class="stats" id="stats">
+    <h2>Netflix Statistics</h2>
+    <div>Total watch time: <span id="totalSpent"></span></div>
+    <div>
+        <canvas id="hourChart"></canvas>
     </div>
+    <div>
+        <p>Most watched titles: </p>
+        <canvas id="topChart"></canvas>
+    </div>
+    <div>
+        <p>Overview of the year:</p>
+        <div id="information"></div>
+        <table class="heatMap" id="heatMap"></table>
+    </div>
+</div>
 
-    <script src="/min/?f=assets/js/jQuery.js,assets/js/chart.js,assets/js/moment.js,assets/js/d3.js,assets/js/heatmap.js,assets/js/main.js&debug=1"></script>
+<script src="assets/js/chart.js"></script>
+<script src="assets/js/main.js"></script>
 </body>
 
 </html>
