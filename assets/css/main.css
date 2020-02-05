@@ -10,6 +10,11 @@ html, body {
     text-rendering: optimizeLegibility !important;
 }
 
+canvas {
+    margin: 8px auto 0;
+    width: 100%;
+}
+
 .loading, .stats {
     display: none;
 }

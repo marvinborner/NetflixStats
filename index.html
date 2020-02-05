@@ -28,14 +28,15 @@
 <div class="stats" id="stats">
     <h2>Netflix Statistics</h2>
     <div>Total watch time: <span id="totalSpent"></span></div>
-    <div>
+    <div class="statWrap">
         <canvas id="hourChart"></canvas>
     </div>
-    <div>
+    <div class="statWrap">
         <p>Most watched titles: </p>
-        <canvas id="topChart"></canvas>
+        <button data-current="bar" id="toggle">Toggle</button>
+        <canvas height="500" id="topChart" width="1500"></canvas>
     </div>
-    <div>
+    <div class="statWrap">
         <p>Overview of the year:</p>
         <div id="information"></div>
         <table class="heatMap" id="heatMap"></table>

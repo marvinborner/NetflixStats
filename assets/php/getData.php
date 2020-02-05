@@ -5,15 +5,18 @@
  * @copyright Marvin Borner 2018
  */
 
+$debug = true;
 $cookie = $_POST['cookie'];
 
-if (isset($cookie)) {
+if ($debug) {
+    print_r(file_get_contents("debug.json"));
+} else if (isset($cookie)) {
     $isLastPage = false;
     $currentPage = 0;
     $result = '[';
 
     while ($isLastPage === false) {
-        $ch = curl_init('https://www.netflix.com/api/shakti/ve8ded8cd/viewingactivity?pg=' . $currentPage . '&pgSize=100');
+        $ch = curl_init('https://www.netflix.com/api/shakti/v52f427f5/viewingactivity?pg=' . $currentPage . '&pgSize=100');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_COOKIE, $cookie);
