@@ -6,6 +6,8 @@
 
 html, body {
     padding: 8px;
+    color: #ffffff;
+    background-color: #141414;
     font-family: "Varela Round", sans-serif !important;
     text-rendering: optimizeLegibility !important;
 }
@@ -26,7 +28,7 @@ canvas {
 .stats > div {
     padding: 8px;
     margin-top: 8px;
-    border: 1px solid black;
+    border: 1px solid white;
 }
 
 .heatMap {
@@ -36,5 +38,5 @@ canvas {
 .heatMap td {
     width: 2vw;
     height: 2vw;
-    border: 1px solid black;
+    border: 1px solid white;
 }

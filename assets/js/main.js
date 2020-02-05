@@ -49,6 +49,8 @@ function analyze(data) {
   });
 
   setSizes();
+  drawTotalSpent(filtered);
+  drawTimeline(filtered);
   drawTopTitles(filtered);
 
   toggle.onclick = () => drawTopTitles(filtered);
@@ -62,6 +64,55 @@ function setSizes() {
     elem.setAttribute("width", document.querySelector(".stats div").offsetWidth);
     elem.setAttribute("height", window.innerHeight / 2 + 200);
   }
+}
+
+function drawTotalSpent(data) {
+  const totalHours = Object.keys(data).map(key => data[key].duration).reduce((a, b) => a + b);
+  document.querySelector("#totalSpent").innerHTML = `
+  Days: ${Math.floor(totalHours / 24)};
+  Hours: ${Math.floor(totalHours)};
+  Minutes: ${Math.round(totalHours * 60)};
+  Seconds: ${Math.round(totalHours * 60 * 60)}`
+}
+
+function drawTimeline(data) {
+  const hours = Object.keys(data).map(key => data[key].dates.map(date => date.getHours())).flat(1);
+  const occurrence = new Array(24).fill(0);
+
+  hours.forEach(hour => occurrence[hour] ? occurrence[hour]++ : occurrence[hour] = 1);
+
+  const ctx = document.getElementById("hourChart");
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: [...Array(24).keys()],
+      datasets: [{
+        data: occurrence,
+        borderColor: "#e50914"
+      }]
+    },
+    options: {
+      responsive: false,
+      maintainAspectRatio: true,
+      legend: {
+        display: false
+      },
+      scales: {
+        xAxes: [{
+          gridLines: {
+            color: "#424242"
+          }
+        }],
+        yAxes: [{
+          gridLines: {
+            color: "#424242"
+          }
+        }]
+      }
+    }
+  });
+
+  console.log(occurrence);
 }
 
 let previous;
@@ -79,6 +130,7 @@ function drawTopTitles(data) {
       labels: Object.keys(data).sort((a, b) => data[b].duration - data[a].duration),
       datasets: [{
         data: Object.keys(data).map(key => +data[key].duration.toFixed(2)).sort((a, b) => b - a),
+        borderColor: "#424242",
         backgroundColor: Array.from({length: Object.keys(data).length}, () => "#" + ((1 << 24) * Math.random() | 0).toString(16))
       }]
     },
@@ -91,6 +143,26 @@ function drawTopTitles(data) {
       },
       legend: {
         display: false
+      },
+      scales: {
+        xAxes: [{
+          gridLines: {
+            display: toggle.getAttribute("data-current") === "bar",
+            color: "#424242"
+          },
+          ticks: {
+            display: toggle.getAttribute("data-current") === "bar",
+          }
+        }],
+        yAxes: [{
+          gridLines: {
+            display: toggle.getAttribute("data-current") === "bar",
+            color: "#424242"
+          },
+          ticks: {
+            display: toggle.getAttribute("data-current") === "bar",
+          }
+        }]
       }
     }
   })

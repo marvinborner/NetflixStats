@@ -5,7 +5,7 @@
  * @copyright Marvin Borner 2018
  */
 
-$debug = true;
+$debug = false;
 $cookie = $_POST['cookie'];
 
 if ($debug) {
