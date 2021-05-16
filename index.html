@@ -1,50 +1,60 @@
-<!doctype html>
+<!DOCTYPE html>
 <!--
     Markup of the Netflix Stats Generator
     @author Marvin Borner
     @copyright Marvin Borner 2018
 -->
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+            name="viewport"
+        />
+        <meta content="ie=edge" http-equiv="X-UA-Compatible" />
+        <link
+            href="https://fonts.googleapis.com/css?family=Varela+Round"
+            rel="stylesheet"
+        />
+        <link href="assets/css/normalize.css" rel="stylesheet" />
+        <link href="assets/css/main.css" rel="stylesheet" />
+        <title>Netflix Statistics</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-          name="viewport">
-    <meta content="ie=edge" http-equiv="X-UA-Compatible">
-    <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
-    <link href="assets/css/normalize.css" rel="stylesheet">
-    <link href="assets/css/main.css" rel="stylesheet">
-    <title>Netflix Statistics</title>
-</head>
+    <body>
+        <div id="cookie_wrap">
+            <label for="cookie">Enter your cookie:</label>
+            <input
+                class="cookie"
+                id="cookie"
+                placeholder="memclid=***; ..."
+                type="text"
+            />
+        </div>
 
-<body>
-<div id="cookie_wrap">
-    <label for="cookie">Enter your cookie:</label>
-    <input class="cookie" id="cookie" placeholder="memclid=***; ..." type="text">
-</div>
+        <div class="loading" id="loading">
+            Loading... (This can take some time, please be patient)
+        </div>
 
-<div class="loading" id="loading">Loading...</div>
+        <div class="stats" id="stats">
+            <h2>Netflix Statistics</h2>
+            <div>Total watch time: <span id="totalSpent"></span></div>
+            <div>
+                <canvas id="hourChart"></canvas>
+            </div>
+            <div>
+                <p>Most watched titles:</p>
+                <button data-current="bar" id="toggle">Toggle</button>
+                <canvas id="topChart"></canvas>
+            </div>
+            <div>
+                <p>Overview of the year:</p>
+                <div id="information"></div>
+                <table class="heatMap" id="heatMap"></table>
+            </div>
+        </div>
 
-<div class="stats" id="stats">
-    <h2>Netflix Statistics</h2>
-    <div>Total watch time: <span id="totalSpent"></span></div>
-    <div>
-        <canvas id="hourChart"></canvas>
-    </div>
-    <div>
-        <p>Most watched titles: </p>
-        <button data-current="bar" id="toggle">Toggle</button>
-        <canvas id="topChart"></canvas>
-    </div>
-    <div>
-        <p>Overview of the year:</p>
-        <div id="information"></div>
-        <table class="heatMap" id="heatMap"></table>
-    </div>
-</div>
-
-<script src="assets/js/chart.js"></script>
-<script src="assets/js/main.js"></script>
-</body>
-
+        <script src="assets/js/chart.js"></script>
+        <script src="assets/js/main.js"></script>
+    </body>
 </html>
