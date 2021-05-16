@@ -6,13 +6,7 @@
  * @copyright Marvin Borner 2018
  */
 
-$debug = true;
 $cookie = $_POST['cookie'];
-
-if ($debug) {
-    print_r(file_get_contents("../../debug.json"));
-    die();
-}
 
 if (!isset($cookie)) {
     http_response_code(404);

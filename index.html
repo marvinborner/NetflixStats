@@ -22,7 +22,7 @@
     </head>
 
     <body>
-        <div id="cookie_wrap">
+        <div class="input" id="cookie_wrap">
             <label for="cookie">Enter your cookie:</label>
             <input
                 class="cookie"
@@ -40,21 +40,21 @@
             <h2>Netflix Statistics</h2>
             <div>Total watch time: <span id="totalSpent"></span></div>
             <div>
-                <canvas id="hourChart"></canvas>
+                <p>Title count per hour:</p>
+                <div class="chart" id="hourChart"></div>
             </div>
             <div>
                 <p>Most watched titles:</p>
-                <button data-current="bar" id="toggle">Toggle</button>
-                <canvas id="topChart"></canvas>
+                <button id="toggle">View all</button>
+                <div class="chart" id="topChart"></div>
             </div>
             <div>
-                <p>Overview of the year:</p>
-                <div id="information"></div>
-                <table class="heatMap" id="heatMap"></table>
+                <p>Title count per day this year:</p>
+                <div class="chart" id="heatMap"></div>
             </div>
         </div>
 
-        <script src="assets/js/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <script src="assets/js/main.js"></script>
     </body>
 </html>

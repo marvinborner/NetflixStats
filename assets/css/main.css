@@ -4,20 +4,18 @@
  * @copyright Marvin Borner 2019
  */
 
-html, body {
+html,
+body {
     padding: 8px;
-    color: #ffffff;
+    color: #fff;
     background-color: #141414;
     font-family: "Varela Round", sans-serif !important;
     text-rendering: optimizeLegibility !important;
 }
 
-canvas {
-    margin: 8px auto 0;
-    width: 100%;
-}
-
-.loading, .stats {
+.loading,
+.stats,
+.input {
     display: none;
 }
 
@@ -29,14 +27,6 @@ canvas {
     padding: 8px;
     margin-top: 8px;
     border: 1px solid white;
-}
-
-.heatMap {
-    border-collapse: collapse;
-}
-
-.heatMap td {
-    width: 2vw;
-    height: 2vw;
-    border: 1px solid white;
+    max-width: 800px;
+    margin: 8px auto;
 }
