@@ -78,7 +78,7 @@ function analyze(data) {
         obj.count++;
     });
 
-    drawTotalSpent(filtered);
+    drawTotalSpent(data);
     drawTimeline(filtered);
     drawTopTitles(filtered);
     drawHeatmap(filtered);
@@ -87,14 +87,12 @@ function analyze(data) {
 }
 
 function drawTotalSpent(data) {
-    const totalHours = Object.keys(data)
-        .map((key) => data[key].duration)
-        .reduce((a, b) => a + b);
+	const totalSeconds = data.reduce((a,b) => a + b.duration, 0);
     document.querySelector("#totalSpent").innerHTML = `
-    ${Math.floor(totalHours / 24)} days or
-    ${Math.floor(totalHours)} hours or
-    ${Math.round(totalHours * 60)} minutes or
-    ${Math.round(totalHours * 60 * 60)} seconds!`;
+    ${Math.floor(totalSeconds / 60 / 60 / 24)} days or
+    ${Math.floor(totalSeconds / 60 / 60)} hours or
+    ${Math.round(totalSeconds / 60)} minutes or
+    ${Math.round(totalSeconds)} seconds!`;
 }
 
 function drawTimeline(data) {
@@ -189,6 +187,10 @@ function drawTopTitles(data) {
 
 // TODO: There may be a bug in the first week in January
 function drawHeatmap(data) {
+	const prev = document.getElementById("prevYear");
+	const selected = document.getElementById("selectedYear");
+	const next = document.getElementById("nextYear");
+
     Date.prototype.getWeek = function () {
         var d = new Date(
             Date.UTC(this.getFullYear(), this.getMonth(), this.getDate())
@@ -198,8 +200,15 @@ function drawHeatmap(data) {
         return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
     };
 
-    const currentYear = new Date().getFullYear();
-    const currentWeek = new Date().getWeek();
+	let currentYear, currentWeek;
+	if (selected.innerText == "") {
+		currentYear = new Date().getFullYear();
+		currentWeek = new Date().getWeek();
+		selected.innerText = currentYear;
+	} else {
+		currentYear = +selected.innerText;
+		currentWeek = 52;
+	}
 
     const days = [[], [], [], [], [], [], []];
     Object.keys(data).forEach((elem) => {
@@ -302,6 +311,19 @@ function drawHeatmap(data) {
         },
     });
     chart.render();
+
+	prev.onclick = () => {
+		selected.innerText = +selected.innerText - 1;
+		chart.destroy();
+		drawHeatmap(data);
+	}
+
+	next.onclick = () => {
+		selected.innerText = +selected.innerText + 1;
+		chart.destroy();
+		drawHeatmap(data);
+	}
+
 }
 
 Apex.colors = ["#e50914"];

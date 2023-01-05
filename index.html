@@ -38,6 +38,7 @@
 
         <div class="stats" id="stats">
             <h2>Netflix Statistics</h2>
+			<div><b>Note:</b> The statistics don't include rewatches due to technical reasons</div>
             <div>Total watch time: <span id="totalSpent"></span></div>
             <div>
                 <p>Title count per hour:</p>
@@ -49,7 +50,8 @@
                 <div class="chart" id="topChart"></div>
             </div>
             <div>
-                <p>Title count per day this year:</p>
+                <p>Title count per day per year:</p>
+				<p><span id="prevYear">&#10094;</span> <span id="selectedYear" data-week=0></span> <span id="nextYear">&#10095;</span></p>
                 <div class="chart" id="heatMap"></div>
             </div>
         </div>

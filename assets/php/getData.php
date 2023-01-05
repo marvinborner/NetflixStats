@@ -19,7 +19,7 @@ $result = '[';
 
 while ($isLastPage === false) {
     // Anywhere on netflix.com in console: netflix.appContext.state.model.models.serverDefs.data.BUILD_IDENTIFIER
-    $ch = curl_init('https://www.netflix.com/shakti/vbe1263cd/viewingactivity?pg=' . $currentPage . '&pgSize=100');
+    $ch = curl_init('https://www.netflix.com/api/shakti/mre/viewingactivity?pg=' . $currentPage . '&pgSize=100');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setopt($ch, CURLOPT_COOKIE, $cookie);
